@@ -23,7 +23,7 @@ model User {
   email           String   @unique
   profilePhotoUrl String?
   profilePhotoId  String?
-  carpools        CarPool[]
+  carpools        Carpool[]
   messages        Message[]
   conversations   ConversationMember[]
   createdAt       DateTime @default(now())
@@ -32,12 +32,12 @@ model User {
   @@map("users")
 }
 
-model CarPool {
+model Carpool {
   id                String   @id @default(uuid())
   userId            String
   pickupPoint       String
   destinationPoint  String
-  pickupTime        DateTime
+  departureTime     DateTime
   requiredPeople    Int
   expiresAt         DateTime
   user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
