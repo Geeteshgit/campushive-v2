@@ -9,4 +9,9 @@ export const env = {
     (() => {
       throw new Error("Missing CLIENT_URL environment variable");
     })(),
+  DATABASE_URL:
+    process.env.DATABASE_URL ??
+    (() => {
+      throw new Error("Missing DATABASE_URL environment variable");
+    })(),
 };

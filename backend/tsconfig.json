@@ -7,9 +7,10 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
+    "module": "esnext",
+    "target": "es2023",
     "types": ["node"],
+    "moduleResolution": "bundler",
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -34,6 +35,8 @@
 
     // Recommended Options
     "strict": true,
+    "esModuleInterop": true,
+    "ignoreDeprecations": "6.0",
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,

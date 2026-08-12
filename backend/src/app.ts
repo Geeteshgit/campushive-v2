@@ -4,7 +4,6 @@ import cors from "cors";
 // Import Routes
 import userRoutes from "./modules/users/user.route.js";
 import carpoolRoutes from "./modules/carpools/carpool.route.js";
-import lostFoundRoutes from "./modules/lost-found/lost-found.route.js";
 import messageRoutes from "./modules/messages/message.route.js";
 
 const app: Express = express();
@@ -22,7 +21,6 @@ app.use(
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/carpools", carpoolRoutes);
-app.use("/api/lostfound", lostFoundRoutes);
 app.use("/api/messages", messageRoutes);
 
 app.get("/api/health", (req, res) => {
