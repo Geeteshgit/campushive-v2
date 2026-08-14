@@ -4,7 +4,7 @@ import { registerSchema, loginSchema } from "./auth.schema";
 
 import * as authService from "./auth.service.js";
 
-import { AppError } from "../../utils/app-error.js";
+import { AppError } from "../../utils/app-error";
 
 const isProduction = process.env.NODE_ENV === "production";
 

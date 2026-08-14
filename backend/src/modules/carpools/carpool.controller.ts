@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import * as carpoolService from "./carpool.service";
+import * as carpoolService from "./carpool.service.js";
 
 export const createCarpool = async (
   req: Request,

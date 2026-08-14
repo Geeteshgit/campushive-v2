@@ -1,5 +1,5 @@
 import { prisma } from "../../lib/prisma";
-import { AppError } from "../../utils/app-error";
+import { AppError } from "../..//utils/app-error";
 import type { CreateCarpoolInput, UpdateCarpoolInput } from "./carpool.schema";
 
 export const createCarpool = async (
