@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
 import type { CreateCarpoolInput, UpdateCarpoolInput } from "./carpool.schema";
 
 export const createCarpool = async (
@@ -104,19 +105,20 @@ export const updateCarpool = async (
   });
 
   if (!carpool) {
-    throw new Error("Carpool not found");
+    throw new AppError("Carpool not found", 404);
   }
 
   if (carpool.userId !== userId) {
-    throw new Error("You are not the host of this carpool");
+    throw new AppError("You are not the host of this carpool", 403);
   }
 
   if (
     data.maxMembers !== undefined &&
     data.maxMembers < carpool._count.members
   ) {
-    throw new Error(
+    throw new AppError(
       `Maximum members cannot be less than ${carpool._count.members}`,
+      400,
     );
   }
 
@@ -154,11 +156,11 @@ export const deleteCarpool = async (carpoolId: string, userId: string) => {
   });
 
   if (!carpool) {
-    throw new Error("Carpool not found");
+    throw new AppError("Carpool not found", 404);
   }
 
   if (carpool.userId !== userId) {
-    throw new Error("You are not the host of this carpool");
+    throw new AppError("You are not the host of this carpool", 403);
   }
 
   return prisma.carpool.delete({

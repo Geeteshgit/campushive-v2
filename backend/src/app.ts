@@ -1,11 +1,12 @@
 import express, { type Express } from "express";
 import cors from "cors";
 
+import { errorHandler } from "./middleware/error-handler.js";
+
 // Import Routes
 import userRoutes from "./modules/users/user.route.js";
 import carpoolRoutes from "./modules/carpools/carpool.route.js";
 import messageRoutes from "./modules/messages/message.route.js";
-import { errorHandler } from "./middleware/errorHandler.js";
 
 const app: Express = express();
 
