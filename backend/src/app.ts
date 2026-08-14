@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { errorHandler } from "./middleware/error-handler.js";
 
 // Import Routes
+import authRoutes from "./modules/auth/auth.route.js";
 import userRoutes from "./modules/users/user.route.js";
 import carpoolRoutes from "./modules/carpools/carpool.route.js";
 import messageRoutes from "./modules/messages/message.route.js";
@@ -23,6 +24,12 @@ app.use(cookieParser());
 // );
 
 // Routes
+
+app.use((req, _res, next) => {
+  console.log("REQUEST:", req.method, req.originalUrl);
+  next();
+});
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/carpools", carpoolRoutes);
 app.use("/api/messages", messageRoutes);
