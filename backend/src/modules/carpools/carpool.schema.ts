@@ -20,9 +20,9 @@ export const createCarpoolSchema = z.object({
       "Departure time must be in the future",
     ),
 
-  requiredPeople: z.coerce
+  maxMembers: z.coerce
     .number()
-    .int("Required people must be a whole number")
+    .int("Maximum members must be a whole number")
     .min(1, "At least 1 person is required")
     .max(10, "Maximum 10 people allowed"),
 });
@@ -48,9 +48,9 @@ export const updateCarpoolSchema = z
       .refine((date) => date > new Date(), "Pickup time must be in the future")
       .optional(),
 
-    requiredPeople: z.coerce
+    maxMembers: z.coerce
       .number()
-      .int("Required people must be a whole number")
+      .int("Maximum members must be a whole number")
       .min(1, "At least 1 person is required")
       .max(10, "Maximum 10 people allowed")
       .optional(),
@@ -59,3 +59,6 @@ export const updateCarpoolSchema = z
     (data) => Object.keys(data).length > 0,
     "At least one field must be provided",
   );
+
+export type CreateCarpoolInput = z.infer<typeof createCarpoolSchema>;
+export type UpdateCarpoolInput = z.infer<typeof updateCarpoolSchema>;

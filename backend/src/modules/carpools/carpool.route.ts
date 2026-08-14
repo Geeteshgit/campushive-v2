@@ -1,17 +1,19 @@
 import { Router } from "express";
 
 import {
-  getAllCarpools,
-  getUserCarpools,
+  getCarpools,
   createCarpool,
+  getCarpoolById,
+  updateCarpool,
   deleteCarpool,
 } from "./carpool.controller.js";
 
 const router: Router = Router();
 
-router.get("/", getAllCarpools);
-router.get("/me", getUserCarpools);
+router.get("/", getCarpools);
 router.post("/", createCarpool);
+router.get("/:id", getCarpoolById);
+router.put("/:id", updateCarpool);
 router.delete("/:id", deleteCarpool);
 
 export default router;
