@@ -14,4 +14,14 @@ export const env = {
     (() => {
       throw new Error("Missing DATABASE_URL environment variable");
     })(),
+  JWT_ACCESS_SECRET:
+    process.env.JWT_ACCESS_SECRET ??
+    (() => {
+      throw new Error("Missing JWT_ACCESS_SECRET environment variable");
+    })(),
+  JWT_REFRESH_SECRET:
+    process.env.JWT_REFRESH_SECRET ??
+    (() => {
+      throw new Error("Missing JWT_REFRESH_SECRET environment variable");
+    })(),
 };
