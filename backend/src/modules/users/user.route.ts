@@ -2,15 +2,18 @@ import { Router } from "express";
 
 import {
   getUser,
-  getSelectedUser,
+  getMyCarpools,
   updateUser,
   deleteUser,
 } from "./user.controller.js";
+import { authenticate } from "../../middleware/auth.js";
 
 const router: Router = Router();
 
+router.use(authenticate);
+
 router.get("/", getUser);
-router.get("/:id", getSelectedUser);
+router.get("/carpools", getMyCarpools);
 router.put("/", updateUser);
 router.delete("/", deleteUser);
 

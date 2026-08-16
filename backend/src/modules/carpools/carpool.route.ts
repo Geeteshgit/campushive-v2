@@ -1,19 +1,30 @@
 import { Router } from "express";
 
+import { authenticate } from "../../middleware/auth.js";
 import {
-  getCarpools,
   createCarpool,
+  decideCarpoolRequest,
+  cancelCarpool,
   getCarpoolById,
+  getCarpoolRequests,
+  getCarpools,
+  removeCarpoolMember,
+  requestToJoinCarpool,
   updateCarpool,
-  deleteCarpool,
 } from "./carpool.controller.js";
 
 const router: Router = Router();
+
+router.use(authenticate);
 
 router.get("/", getCarpools);
 router.post("/", createCarpool);
 router.get("/:id", getCarpoolById);
 router.put("/:id", updateCarpool);
-router.delete("/:id", deleteCarpool);
+router.patch("/:id/cancel", cancelCarpool);
+router.post("/:id/requests", requestToJoinCarpool);
+router.get("/:id/requests", getCarpoolRequests);
+router.patch("/:id/requests/:requestId", decideCarpoolRequest);
+router.delete("/:id/members/:userId", removeCarpoolMember);
 
 export default router;

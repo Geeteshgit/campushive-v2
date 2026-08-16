@@ -5,8 +5,9 @@ import { registerSchema, loginSchema } from "./auth.schema";
 import * as authService from "./auth.service.js";
 
 import { AppError } from "../../utils/app-error";
+import { env } from "../../config/env.config";
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = env.NODE_ENV === "production";
 
 const cookieOptions = {
   httpOnly: true,
@@ -34,7 +35,7 @@ export const register = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const data = registerSchema.parse(req.body);
 
@@ -42,7 +43,8 @@ export const register = async (
 
     setAuthCookies(res, result.accessToken, result.refreshToken);
 
-    return res.status(201).json({
+    res.status(201).json({
+      success: true,
       message: "Registration successful",
       user: result.user,
     });
@@ -55,7 +57,7 @@ export const login = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const data = loginSchema.parse(req.body);
 
@@ -63,7 +65,8 @@ export const login = async (
 
     setAuthCookies(res, result.accessToken, result.refreshToken);
 
-    return res.status(200).json({
+    res.status(200).json({
+      success: true,
       message: "Login successful",
       user: result.user,
     });
@@ -76,7 +79,7 @@ export const refresh = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
@@ -88,7 +91,8 @@ export const refresh = async (
 
     setAuthCookies(res, result.accessToken, result.refreshToken);
 
-    return res.status(200).json({
+    res.status(200).json({
+      success: true,
       message: "Token refreshed",
     });
   } catch (error) {
@@ -100,7 +104,7 @@ export const logout = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
@@ -110,7 +114,8 @@ export const logout = async (
 
     res.clearCookie("refreshToken", cookieOptions);
 
-    return res.status(200).json({
+    res.status(200).json({
+      success: true,
       message: "Logout successful",
     });
   } catch (error) {
@@ -118,11 +123,16 @@ export const logout = async (
   }
 };
 
-export const me = async (req: Request, res: Response, next: NextFunction) => {
+export const me = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const user = await authService.getCurrentUser(res.locals.user.id);
 
-    return res.status(200).json({
+    res.status(200).json({
+      success: true,
       user,
     });
   } catch (error) {

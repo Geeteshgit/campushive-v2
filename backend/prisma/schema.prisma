@@ -24,6 +24,12 @@ enum CarpoolRequestStatus {
   CANCELLED
 }
 
+enum CarpoolStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
 model User {
   id              String               @id @default(uuid())
   username        String               @unique
@@ -38,6 +44,7 @@ model User {
   conversations   ConversationMember[]
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
+  deletedAt       DateTime?
   sessions        Session[]
 
   @@map("users")
@@ -61,6 +68,7 @@ model Carpool {
   destinationPoint String
   departureTime    DateTime
   maxMembers       Int
+  status           CarpoolStatus    @default(ACTIVE)
   user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   requests         CarpoolRequest[]
   members          CarpoolMember[]
@@ -68,6 +76,7 @@ model Carpool {
   updatedAt        DateTime         @updatedAt
 
   @@index([userId])
+  @@index([departureTime])
   @@index([createdAt])
   @@map("carpools")
 }
@@ -104,6 +113,7 @@ model CarpoolMember {
 model Conversation {
   id        String               @id @default(uuid())
   type      ConversationType
+  key       String               @unique
   members   ConversationMember[]
   messages  Message[]
   createdAt DateTime             @default(now())
@@ -129,10 +139,12 @@ model ConversationMember {
 model Message {
   id             String       @id @default(uuid())
   conversationId String
-  senderId       String
-  content        String
+  senderId       String?
+  content        String?
+  imageUrl       String?
+  imageId        String?
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  sender         User?        @relation(fields: [senderId], references: [id], onDelete: SetNull)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 

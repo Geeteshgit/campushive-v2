@@ -1,9 +1,15 @@
+import { createServer } from "node:http";
+
 import app from "./app.js";
 import { env } from "./config/env.config.js";
+import { initializeSocket } from "./lib/socket.js";
 
 const startServer = async (): Promise<void> => {
   try {
-    app.listen(env.PORT, () => {
+    const httpServer = createServer(app);
+    initializeSocket(httpServer);
+
+    httpServer.listen(env.PORT, () => {
       console.log(`Server Running On Port: ${env.PORT}`);
     });
   } catch (error) {

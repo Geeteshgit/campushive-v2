@@ -13,13 +13,22 @@ export const updateUserSchema = z.object({
     .optional(),
 
   profilePhotoUrl: z
-    .httpUrl("Profile photo URL must be a valid URL")
+    .union([z.httpUrl("Profile photo URL must be a valid URL"), z.null()])
     .optional(),
 
   profilePhotoId: z
-    .string()
-    .trim()
-    .min(1, "Profile photo ID cannot be empty")
-    .max(255, "Profile photo ID is too long")
+    .union([
+      z
+        .string()
+        .trim()
+        .min(1, "Profile photo ID cannot be empty")
+        .max(255, "Profile photo ID is too long"),
+      z.null(),
+    ])
     .optional(),
-});
+}).refine(
+  (data) => Object.keys(data).length > 0,
+  "At least one field must be provided",
+);
+
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
