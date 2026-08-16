@@ -112,7 +112,7 @@ export const login = async (data: LoginInput) => {
     },
   });
 
-  if (!user) {
+  if (!user || !user.password) {
     throw new AppError("Invalid email or password", 401);
   }
 

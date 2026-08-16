@@ -6,11 +6,11 @@ const carpoolLocationSchema = z
   .min(3, "Location must be at least 3 characters")
   .max(150, "Location must be at most 150 characters");
 
-const maxMembersSchema = z.coerce
+const requiredPeopleSchema = z.coerce
   .number()
-  .int("Maximum members must be a whole number")
+  .int("Required people must be a whole number")
   .min(1, "At least 1 person is required")
-  .max(10, "Maximum 10 people allowed");
+  .max(10, "At most 10 people can be required");
 
 export const createCarpoolSchema = z.object({
   pickupPoint: carpoolLocationSchema,
@@ -18,7 +18,7 @@ export const createCarpoolSchema = z.object({
   departureTime: z.coerce
     .date()
     .refine((date) => date > new Date(), "Departure time must be in the future"),
-  maxMembers: maxMembersSchema,
+  requiredPeople: requiredPeopleSchema,
 });
 
 export const updateCarpoolSchema = z
@@ -29,7 +29,7 @@ export const updateCarpoolSchema = z
       .date()
       .refine((date) => date > new Date(), "Departure time must be in the future")
       .optional(),
-    maxMembers: maxMembersSchema.optional(),
+    requiredPeople: requiredPeopleSchema.optional(),
   })
   .refine(
     (data) => Object.keys(data).length > 0,

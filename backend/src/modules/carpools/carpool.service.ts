@@ -57,13 +57,17 @@ export const createCarpool = async (userId: string, data: CreateCarpoolInput) =>
       pickupPoint: data.pickupPoint,
       destinationPoint: data.destinationPoint,
       departureTime: data.departureTime,
-      maxMembers: data.maxMembers,
+      requiredPeople: data.requiredPeople,
       members: { create: { userId } },
     },
     include: carpoolInclude,
   });
 
-export const getCarpools = async ({ page, limit, status }: CarpoolPagination) => {
+export const getCarpools = async ({
+  page,
+  limit,
+  status,
+}: CarpoolPagination) => {
   await syncExpiredCarpools();
   const statusMap = {
     active: "ACTIVE",
@@ -104,9 +108,12 @@ export const updateCarpool = async (
   data: UpdateCarpoolInput,
 ) => {
   const carpool = await requireActiveHostCarpool(carpoolId, userId);
-  if (data.maxMembers !== undefined && data.maxMembers < carpool._count.members) {
+  if (
+    data.requiredPeople !== undefined &&
+    data.requiredPeople < carpool._count.members
+  ) {
     throw new AppError(
-      `Maximum members cannot be less than ${carpool._count.members}`,
+      `Required people cannot be less than ${carpool._count.members}`,
       400,
     );
   }
@@ -118,8 +125,12 @@ export const updateCarpool = async (
       ...(data.destinationPoint !== undefined && {
         destinationPoint: data.destinationPoint,
       }),
-      ...(data.departureTime !== undefined && { departureTime: data.departureTime }),
-      ...(data.maxMembers !== undefined && { maxMembers: data.maxMembers }),
+      ...(data.departureTime !== undefined && {
+        departureTime: data.departureTime,
+      }),
+      ...(data.requiredPeople !== undefined && {
+        requiredPeople: data.requiredPeople,
+      }),
     },
     include: carpoolInclude,
   });
@@ -141,7 +152,10 @@ export const cancelCarpool = async (carpoolId: string, userId: string) => {
   });
 };
 
-export const requestToJoinCarpool = async (carpoolId: string, userId: string) => {
+export const requestToJoinCarpool = async (
+  carpoolId: string,
+  userId: string,
+) => {
   await syncExpiredCarpools();
   const carpool = await prisma.carpool.findUnique({
     where: { id: carpoolId },
@@ -154,7 +168,7 @@ export const requestToJoinCarpool = async (carpoolId: string, userId: string) =>
   if (carpool.userId === userId) {
     throw new AppError("The host is already a member of this carpool", 400);
   }
-  if (carpool._count.members >= carpool.maxMembers) {
+  if (carpool._count.members >= carpool.requiredPeople) {
     throw new AppError("This carpool is full", 409);
   }
 
@@ -233,11 +247,11 @@ export const decideCarpoolRequest = async (
         });
       }
 
-      if (carpool._count.members >= carpool.maxMembers) {
+      if (carpool._count.members >= carpool.requiredPeople) {
         throw new AppError("This carpool is full", 409);
       }
       await tx.carpoolMember.create({
-        data: { carPoolId: carpoolId, userId: request.userId },
+        data: { carpoolId: carpoolId, userId: request.userId },
       });
       return tx.carpoolRequest.update({
         where: { id: requestId },
@@ -261,7 +275,9 @@ export const removeCarpoolMember = async (
   try {
     await prisma.$transaction([
       prisma.carpoolMember.delete({
-        where: { carPoolId_userId: { carPoolId: carpoolId, userId: memberUserId } },
+        where: {
+          carpoolId_userId: { carpoolId: carpoolId, userId: memberUserId },
+        },
       }),
       prisma.carpoolRequest.update({
         where: { carpoolId_userId: { carpoolId, userId: memberUserId } },

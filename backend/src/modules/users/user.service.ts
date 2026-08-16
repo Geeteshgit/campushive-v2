@@ -55,10 +55,7 @@ export const getUserCarpools = async (userId: string) => {
   });
 
   const where = {
-    OR: [
-      { userId },
-      { members: { some: { userId } } },
-    ],
+    OR: [{ userId }, { members: { some: { userId } } }],
   };
 
   const [active, expired, cancelled] = await Promise.all([
@@ -91,10 +88,7 @@ export const getUserCarpools = async (userId: string) => {
   return { active, expired, cancelled };
 };
 
-export const updateUserById = async (
-  userId: string,
-  data: UpdateUserInput,
-) => {
+export const updateUserById = async (userId: string, data: UpdateUserInput) => {
   if (data.username !== undefined) {
     const existingUser = await prisma.user.findUnique({
       where: { username: data.username },
@@ -153,7 +147,6 @@ export const deleteUserById = async (userId: string) => {
         where: {
           userId,
           status: "ACTIVE",
-          departureTime: { gt: deletedAt },
         },
         data: { status: "CANCELLED" },
       });
@@ -180,7 +173,7 @@ export const deleteUserById = async (userId: string) => {
         data: {
           username: `deleted_${deletedIdentifier}`,
           email: `deleted+${deletedIdentifier}@campushive.invalid`,
-          password: await hashPassword(crypto.randomUUID()),
+          password: null,
           profilePhotoUrl: null,
           profilePhotoId: null,
           deletedAt,
